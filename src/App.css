@@ -8,3 +8,7 @@
 .input-border-round fieldset {
   border-radius: 100vw;
 }
+
+.track-item:hover p {
+  color: blue;
+}
