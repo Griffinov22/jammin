@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
@@ -11,13 +11,40 @@ import { Grid } from "@mui/material";
 import data from "./tempData/tempData";
 
 function App() {
-  const [addedSong, setAddedSong] = useState({});
-  console.log(addedSong);
+  const [songsSearch, setSongsSearch] = useState(data); //change this when going to API
+  const [playList, setPlayList] = useState([]);
 
-  const findAndSetSong = (id) => {
-    const song = data.find((song) => song.id == id);
+  const addSongToPlayList = (id) => {
+    if (!songsSearch) return;
+
+    const song = songsSearch.find((song) => song.id == id);
     if (song) {
-      setAddedSong(song);
+      setPlayList((prevSongs) => {
+        return [...prevSongs, song];
+      });
+      setSongsSearch((prevSongs) => {
+        const reducedSongSearch = prevSongs.filter(
+          (oldSong) => oldSong != song
+        );
+        return reducedSongSearch;
+      });
+    } else {
+      alert("song was not found");
+    }
+  };
+
+  const removeSongFromPlayList = (id) => {
+    if (!songsSearch) return;
+
+    const song = playList.find((song) => song.id == id);
+    if (song) {
+      setPlayList((prevSongs) => {
+        const reducedPlayList = prevSongs.filter((oldSong) => oldSong != song);
+        return reducedPlayList;
+      });
+      setSongsSearch((prevSongs) => {
+        return [...prevSongs, song];
+      });
     } else {
       alert("song was not found");
     }
@@ -29,8 +56,14 @@ function App() {
       <Container maxWidth="md">
         <SearchBar />
         <Grid container mt={4} direction="row" spacing={2} height="60vh">
-          <ResultsSection data={data} setSong={findAndSetSong} />
-          <PlayListSection />
+          <ResultsSection
+            songsSearch={songsSearch}
+            addSongToPlaylist={addSongToPlayList}
+          />
+          <PlayListSection
+            playList={playList}
+            removeSongFromPlayList={removeSongFromPlayList}
+          />
         </Grid>
       </Container>
     </>

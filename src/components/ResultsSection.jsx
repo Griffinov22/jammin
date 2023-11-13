@@ -3,7 +3,7 @@ import Track from "./Track";
 import { Box, Grid, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
 
-const ResultsSection = ({ data, setSong }) => {
+const ResultsSection = ({ songsSearch, addSongToPlaylist }) => {
   return (
     <Grid item sm={12} md={6}>
       <Box bgcolor={grey[100]} borderRadius={2} p={2} height="100%">
@@ -13,14 +13,16 @@ const ResultsSection = ({ data, setSong }) => {
         <hr />
         {/* results list */}
         <Box display="flex" flexDirection="column">
-          {data &&
-            data.map((song) => (
+          {songsSearch &&
+            songsSearch.map((song) => (
               <Track
                 key={song.id}
                 id={song.id}
                 title={song.songTitle}
                 artist={song.artist}
-                setSong={setSong}
+                album={song.album}
+                addSongToPlaylist={addSongToPlaylist}
+                isAddingToPlaylist={true}
               />
             ))}
         </Box>

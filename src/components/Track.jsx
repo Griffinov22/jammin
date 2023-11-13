@@ -1,9 +1,21 @@
 import { Box, Typography } from "@mui/material";
 
-const Track = ({ title, artist, setSong, id }) => {
-  const handleClick = ({ target }) => {
+const Track = ({
+  title,
+  artist,
+  addSongToPlaylist,
+  removeSongFromPlayList,
+  id,
+  album,
+  isAddingToPlaylist,
+}) => {
+  const handleSong = ({ target }) => {
     const songId = target.closest(".track-item").id;
-    setSong(songId);
+    if (isAddingToPlaylist) {
+      addSongToPlaylist(songId);
+    } else {
+      removeSongFromPlayList(songId);
+    }
   };
 
   return (
@@ -15,7 +27,7 @@ const Track = ({ title, artist, setSong, id }) => {
         justifyContent="space-between"
         className="track-item"
         id={id}
-        onClick={handleClick}
+        onClick={handleSong}
         sx={{ cursor: "pointer" }}
       >
         <Box display="flex" flexDirection="column" py={3}>
@@ -28,7 +40,7 @@ const Track = ({ title, artist, setSong, id }) => {
             {title}
           </Typography>
           <Typography variant="p" fontSize={18}>
-            {artist}
+            {artist} {album && "  ||  " + album}
           </Typography>
         </Box>
         <Typography variant="h3" component="p">
