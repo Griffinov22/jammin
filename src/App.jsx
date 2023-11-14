@@ -9,10 +9,22 @@ import PlayListSection from "./components/PlayListSection";
 import { Container } from "@mui/material";
 import { Grid } from "@mui/material";
 import data from "./tempData/tempData";
+import getUserAccessToken from "./api/spotifyApi";
 
 function App() {
   const [songsSearch, setSongsSearch] = useState(data); //change this when going to API
   const [playList, setPlayList] = useState([]);
+  const [accessToken, setAccessToken] = useState("");
+
+  //authentication
+  useEffect(() => {
+    if (window.location.hash == "") {
+      getUserAccessToken();
+    }
+    setAccessToken(
+      new URLSearchParams(window.location.hash.substring(1)).get("access_token")
+    );
+  }, [accessToken]);
 
   const addSongToPlayList = (id) => {
     if (!songsSearch) return;
