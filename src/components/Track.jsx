@@ -19,7 +19,7 @@ const Track = ({
   };
 
   return (
-    <>
+    <Box>
       <Box
         display="flex"
         flexDirection="row"
@@ -48,7 +48,7 @@ const Track = ({
         </Typography>
       </Box>
       <hr />
-    </>
+    </Box>
   );
 };
 
