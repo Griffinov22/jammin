@@ -1,10 +1,8 @@
-const getUserAccessToken = () => {
-  let uri = "https://accounts.spotify.com/authorize";
-  uri += "?response_type=token";
-  uri += "&client_id=" + encodeURIComponent(import.meta.env.VITE_CLIENT_ID);
-  uri +=
-    "&redirect_uri=" + encodeURIComponent(import.meta.env.VITE_SITE_ENDPOINT);
-  window.location = uri;
+export const searchSpotifySong = (queryString) => {
+  const formatQuery = queryString.split(" ").join("+");
+  const limit = 20;
+  console.log(formatQuery);
+  fetch(
+    `https://api.spotify.com/v1/search?q=${formatQuery}&type=track&market=US&limit=${limit}`
+  ).then((data) => console.log(data));
 };
-
-export default getUserAccessToken;

@@ -1,5 +1,5 @@
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
@@ -9,13 +9,13 @@ import PlayListSection from "./components/PlayListSection";
 import { Container } from "@mui/material";
 import { Grid } from "@mui/material";
 import data from "./tempData/tempData";
+import { useAuth } from "./contexts/AuthContext";
 
 function App() {
   const [songsSearch, setSongsSearch] = useState(data); //change this when going to API
   const [playList, setPlayList] = useState([]);
-
-  //authentication
-  // useEffect(() => {}, []);
+  const appContext = useAuth();
+  console.log(appContext);
 
   const addSongToPlayList = (id) => {
     if (!songsSearch) return;
@@ -57,7 +57,7 @@ function App() {
     <>
       <Header />
       <Container maxWidth="md">
-        <SearchBar />
+        <SearchBar setSongsSearch={setSongsSearch} />
         <Grid container mt={4} direction="row" spacing={2} height="60vh">
           <ResultsSection
             songsSearch={songsSearch}
