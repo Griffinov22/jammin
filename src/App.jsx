@@ -15,7 +15,6 @@ function App() {
   const [songsSearch, setSongsSearch] = useState(data); //change this when going to API
   const [playList, setPlayList] = useState([]);
   const appContext = useAuth();
-  console.log(appContext);
 
   const addSongToPlayList = (id) => {
     if (!songsSearch) return;

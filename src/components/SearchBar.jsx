@@ -1,12 +1,14 @@
 import { Box, TextField, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { searchSpotifySong } from "../api/spotifyApi";
+import { useAuth } from "../contexts/AuthContext";
 
 const SearchBar = () => {
+  const SpotifyAuth = useAuth();
   const handleSubmit = (e) => {
     e.preventDefault();
     const query = e.target.querySelector("input").value; //weird because MUI div layering
-    searchSpotifySong(query);
+    searchSpotifySong(query, SpotifyAuth.token);
   };
 
   return (
