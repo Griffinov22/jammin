@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (!token && !window.location.hash) {
       openSpotifyForAccessToken();
-    } else if (window.location.hash) {
+    } else if (!token && window.location.hash) {
       setUserToken(window.location.hash);
     }
   }, []);

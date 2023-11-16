@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useLayoutEffect, useRef } from "react";
 import { blue, grey } from "@mui/material/colors";
 import Track from "./Track";
 import { Grid, Box, Typography, Button } from "@mui/material";
@@ -6,7 +6,6 @@ import { TextField } from "@mui/material";
 
 const PlayListSection = ({ playList, removeSongFromPlayList }) => {
   const [playListName, setPlayListName] = useState("");
-
   const startedList = playList.length > 0;
 
   return (

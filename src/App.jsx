@@ -57,7 +57,7 @@ function App() {
       <Header />
       <Container maxWidth="md">
         <SearchBar setSongsSearch={setSongsSearch} />
-        <Grid container mt={4} direction="row" spacing={2} height="60vh">
+        <Grid container my={4} direction="row" spacing={2}>
           <ResultsSection
             songsSearch={songsSearch}
             addSongToPlaylist={addSongToPlayList}

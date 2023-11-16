@@ -3,12 +3,30 @@ import { grey } from "@mui/material/colors";
 import { searchSpotifySong } from "../api/spotifyApi";
 import { useAuth } from "../contexts/AuthContext";
 
-const SearchBar = () => {
-  const SpotifyAuth = useAuth();
-  const handleSubmit = (e) => {
+const SearchBar = ({ setSongsSearch }) => {
+  const { openSpotifyForAccessToken, setUserToken, token } = useAuth();
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const query = e.target.querySelector("input").value; //weird because MUI div layering
-    searchSpotifySong(query, SpotifyAuth.token);
+    const songQuery = await searchSpotifySong(query, token);
+    if (Object.hasOwn(songQuery, "error")) {
+      //get new token
+      if (!window.location.hash) {
+        openSpotifyForAccessToken();
+      }
+      setUserToken(window.location.hash);
+    }
+    console.log(songQuery);
+
+    const mapSongs = songQuery.tracks.items.map((obj) => {
+      return {
+        id: obj.id,
+        songTitle: obj.name,
+        artist: [...obj.artists.map((obj) => obj.name)],
+        album: obj.name,
+      };
+    });
+    setSongsSearch(mapSongs);
   };
 
   return (

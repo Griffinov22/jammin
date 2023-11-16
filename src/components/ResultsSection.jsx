@@ -1,12 +1,19 @@
+import { useRef, useLayoutEffect } from "react";
 import Track from "./Track";
 
 import { Box, Grid, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
 
 const ResultsSection = ({ songsSearch, addSongToPlaylist }) => {
+  const overflowStyle = {
+    overflowY: "scroll",
+    height: "60vh",
+  };
+  const showScroll = songsSearch.length >= 4;
+
   return (
-    <Grid item sm={12} md={6}>
-      <Box bgcolor={grey[100]} borderRadius={2} p={2} height="100%">
+    <Grid item sm={12} md={6} sx={showScroll && overflowStyle}>
+      <Box bgcolor={grey[100]} borderRadius={2} p={2}>
         <Typography variant="h3" component="h4" fontSize="1.8rem">
           Results
         </Typography>
