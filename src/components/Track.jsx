@@ -11,15 +11,16 @@ const Track = ({
   id,
   album,
   isAddingToPlaylist,
+  href,
 }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
   const handleSong = ({ target }) => {
     //only for adding to playlist
     if (
       isAddingToPlaylist &&
       (target.tagName == "svg" || target.tagName == "path")
     ) {
-      setIsPlaying(!isPlaying);
+      //open an adjacent window to the song on spotify
+      window.open(href, "_blank");
       return;
     }
 
@@ -44,7 +45,7 @@ const Track = ({
         sx={{ cursor: "pointer" }}
       >
         <Box display="flex" flexDirection="column" py={3}>
-          <Box display="flex" alignItems="center">
+          <Box display="flex" alignItems="center" columnGap={1}>
             <Typography
               variant="h3"
               component="h5"
@@ -54,20 +55,19 @@ const Track = ({
             >
               {title}
             </Typography>
-
-            {isAddingToPlaylist &&
-              (isPlaying ? (
-                <PauseIcon sx={{ fontSize: 22 }} />
-              ) : (
-                <PlayCircleIcon sx={{ fontSize: 26 }} />
-              ))}
+            {isAddingToPlaylist && (
+              <PlayCircleIcon
+                sx={{ fontSize: 26 }}
+                title="listen to song on Spotify"
+              />
+            )}
           </Box>
 
           <Typography variant="p" fontSize={18}>
             {artist} {album && "  ||  " + album}
           </Typography>
         </Box>
-        <Typography variant="h3" component="p">
+        <Typography variant="h3" className="add-icon">
           {isAddingToPlaylist ? "+" : "-"}
         </Typography>
       </Box>

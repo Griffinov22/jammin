@@ -9,6 +9,12 @@
   border-radius: 100vw;
 }
 
-.track-item:hover p {
+.track-item:hover .add-icon {
   color: blue;
+}
+
+.track-item:has(svg:hover) .add-icon,
+.track-item:has(path:hover) .add-icon {
+  /* if hover play button override the button color */
+  color: black !important;
 }

@@ -35,6 +35,7 @@ const ResultsSection = ({ songsSearch, addSongToPlaylist }) => {
                 album={song.album}
                 addSongToPlaylist={addSongToPlaylist}
                 isAddingToPlaylist={true}
+                href={song.href}
               />
             ))}
         </Box>

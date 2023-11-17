@@ -16,6 +16,7 @@ const SearchBar = ({ setSongsSearch }) => {
     const songQuery = await searchSpotifySong(query, token);
     if (Object.hasOwn(songQuery, "error")) {
       //get new token
+      localStorage.removeItem("token");
       if (!window.location.hash) {
         openSpotifyForAccessToken();
       }
@@ -26,6 +27,8 @@ const SearchBar = ({ setSongsSearch }) => {
     const mapSongs = songQuery.tracks.items.map((obj) => {
       return {
         id: obj.id,
+        uri: obj.uri,
+        href: obj.external_urls.spotify,
         songTitle: obj.name,
         artist: [...obj.artists.map((obj) => obj.name)],
         album: obj.name,
