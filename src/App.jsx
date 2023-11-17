@@ -8,11 +8,10 @@ import PlayListSection from "./components/PlayListSection";
 
 import { Container } from "@mui/material";
 import { Grid } from "@mui/material";
-import data from "./tempData/tempData";
 import { useAuth } from "./contexts/AuthContext";
 
 function App() {
-  const [songsSearch, setSongsSearch] = useState(data); //change this when going to API
+  const [songsSearch, setSongsSearch] = useState([]);
   const [playList, setPlayList] = useState([]);
   const appContext = useAuth();
 

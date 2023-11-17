@@ -8,6 +8,11 @@ const SearchBar = ({ setSongsSearch }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const query = e.target.querySelector("input").value; //weird because MUI div layering
+    if (query == "") {
+      //clear search
+      setSongsSearch([]);
+      return;
+    }
     const songQuery = await searchSpotifySong(query, token);
     if (Object.hasOwn(songQuery, "error")) {
       //get new token

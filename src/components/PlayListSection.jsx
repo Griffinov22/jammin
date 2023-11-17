@@ -8,6 +8,12 @@ const PlayListSection = ({ playList, removeSongFromPlayList }) => {
   const [playListName, setPlayListName] = useState("");
   const startedList = playList.length > 0;
 
+  const overflowStyle = {
+    overflowY: "scroll",
+    height: "60vh",
+  };
+  const showScroll = playList.length >= 4;
+
   return (
     <Grid item sm={12} md={6}>
       {/* flex \/ */}
@@ -15,9 +21,9 @@ const PlayListSection = ({ playList, removeSongFromPlayList }) => {
         bgcolor={grey[100]}
         borderRadius={2}
         p={2}
-        height="100%"
         display="flex"
         flexDirection="column"
+        sx={{ minHeight: "60vh", ...(showScroll ? overflowStyle : {}) }}
       >
         {/* flex -> */}
         <Box display="flex" alignItems="center" justifyContent="space-between">

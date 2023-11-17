@@ -5,7 +5,7 @@ export const searchSpotifySong = async (queryString, token) => {
   const limit = 20;
 
   let trackData = await fetch(
-    `https://api.spotify.com/v1/search?q=${formatQuery}&type=track&limit=${limit}`,
+    `https://api.spotify.com/v1/search?q=${formatQuery}&type=track&limit=${limit}&include=external=audio`,
     {
       headers: {
         Authorization: "Bearer " + token,

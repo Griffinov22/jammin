@@ -12,8 +12,13 @@ const ResultsSection = ({ songsSearch, addSongToPlaylist }) => {
   const showScroll = songsSearch.length >= 4;
 
   return (
-    <Grid item sm={12} md={6} sx={showScroll && overflowStyle}>
-      <Box bgcolor={grey[100]} borderRadius={2} p={2}>
+    <Grid item sm={12} md={6}>
+      <Box
+        bgcolor={grey[100]}
+        borderRadius={2}
+        p={2}
+        sx={{ minHeight: "60vh", ...(showScroll ? overflowStyle : {}) }}
+      >
         <Typography variant="h3" component="h4" fontSize="1.8rem">
           Results
         </Typography>
