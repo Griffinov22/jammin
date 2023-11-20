@@ -5,7 +5,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(JSON.parse(localStorage.getItem("token")));
 
   useEffect(() => {
-    if (!token && !window.location.hash) {
+    if (!token && window.location.hash != "" && false) {
       openSpotifyForAccessToken();
     } else if (!token && window.location.hash) {
       setUserToken(window.location.hash);

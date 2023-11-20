@@ -14,8 +14,7 @@ import { useAuth } from "./contexts/AuthContext";
 function App() {
   const [songsSearch, setSongsSearch] = useState([]);
   const [playList, setPlayList] = useState([]);
-  const [username, setUsername] = useState("");
-  const [userPic, setUserPic] = useState("");
+  const [user, setUser] = useState({});
   const { token, openSpotifyForAccessToken, setUserToken } = useAuth();
 
   useEffect(() => {
@@ -23,16 +22,20 @@ function App() {
       const profile = await getUserProfile(token);
       if (Object.hasOwn(profile, "error")) {
         //get new token
+        //FIX ERROR IN HERE
         localStorage.removeItem("token");
-        if (!window.location.hash) {
-          openSpotifyForAccessToken();
-        }
+        openSpotifyForAccessToken();
       }
       //has valid
+      setUser({
+        username: profile.display_name,
+        id: profile.id,
+        ...(profile.images.length > 0 && { userPic: profile.images[0] }),
+      });
     }
 
     getProfile(token);
-  }, [username, userPic]);
+  }, []);
 
   const addSongToPlayList = (id) => {
     if (!songsSearch) return;
@@ -74,8 +77,8 @@ function App() {
     <>
       <Header />
       <Container maxWidth="md">
-        <SearchBar setSongsSearch={setSongsSearch} />
-        <Grid container my={4} direction="row" spacing={2}>
+        <SearchBar setSongsSearch={setSongsSearch} user={user} />
+        <Grid container my={2} direction="row" spacing={2}>
           <ResultsSection
             songsSearch={songsSearch}
             addSongToPlaylist={addSongToPlayList}

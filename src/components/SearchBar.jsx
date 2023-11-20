@@ -1,9 +1,9 @@
-import { Box, TextField, Typography } from "@mui/material";
-import { grey } from "@mui/material/colors";
+import { Box, TextField, Typography, Avatar } from "@mui/material";
+import { deepPurple, grey } from "@mui/material/colors";
 import { searchSpotifySong } from "../api/spotifyApi";
 import { useAuth } from "../contexts/AuthContext";
 
-const SearchBar = ({ setSongsSearch }) => {
+const SearchBar = ({ setSongsSearch, user }) => {
   const { openSpotifyForAccessToken, setUserToken, token } = useAuth();
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -64,6 +64,37 @@ const SearchBar = ({ setSongsSearch }) => {
           </form>
         </div>
       </Box>
+      {user.username && (
+        <Typography
+          variant="h5"
+          textAlign="center"
+          color={grey[700]}
+          sx={{
+            fontWeight: 500,
+            color: "black",
+            marginTop: "2rem",
+            whiteSpace: "nowrap",
+          }}
+        >
+          user: {user.username}
+        </Typography>
+      )}
+
+      {user.userPic ? (
+        <Avatar alt="user" src={user.userPic} />
+      ) : (
+        <Avatar
+          src={user.userPic}
+          alt={user.username ? user.username : "profile pic"}
+          sx={{
+            bgcolor: deepPurple[500],
+            textAlign: "center",
+            marginInline: "auto",
+          }}
+        >
+          {user.username ? user.username[0].toUpperCase() : ""}
+        </Avatar>
+      )}
     </Box>
   );
 };
