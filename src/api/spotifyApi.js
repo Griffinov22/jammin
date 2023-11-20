@@ -22,3 +22,15 @@ export const searchSpotifySong = async (queryString, token) => {
 
   return tracksJson;
 };
+
+export const getUserProfile = async (token) => {
+  let userData = await fetch("https://api.spotify.com/v1/me", {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+
+  let userJson = await userData.json();
+
+  return userJson;
+};

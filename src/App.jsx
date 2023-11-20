@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState, useEffect, useContext } from "react";
+import { getUserProfile } from "./api/spotifyApi";
 
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
@@ -13,7 +14,25 @@ import { useAuth } from "./contexts/AuthContext";
 function App() {
   const [songsSearch, setSongsSearch] = useState([]);
   const [playList, setPlayList] = useState([]);
-  const appContext = useAuth();
+  const [username, setUsername] = useState("");
+  const [userPic, setUserPic] = useState("");
+  const { token, openSpotifyForAccessToken, setUserToken } = useAuth();
+
+  useEffect(() => {
+    async function getProfile(token) {
+      const profile = await getUserProfile(token);
+      if (Object.hasOwn(profile, "error")) {
+        //get new token
+        localStorage.removeItem("token");
+        if (!window.location.hash) {
+          openSpotifyForAccessToken();
+        }
+      }
+      //has valid
+    }
+
+    getProfile(token);
+  }, [username, userPic]);
 
   const addSongToPlayList = (id) => {
     if (!songsSearch) return;
