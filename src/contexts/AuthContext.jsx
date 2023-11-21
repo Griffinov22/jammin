@@ -3,11 +3,14 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(JSON.parse(localStorage.getItem("token")));
+  const [expireTime, setExpireTime] = useState(
+    JSON.parse(localStorage.getItem("expires-in"))
+  );
 
   useEffect(() => {
     if (window.location.hash) {
       setUserToken(window.location.hash);
-    } else if (!token) {
+    } else if (!token || Date.now() >= expireTime) {
       openSpotifyForAccessToken();
     }
   }, []);
@@ -26,7 +29,11 @@ export const AuthProvider = ({ children }) => {
     const accessToken = new URLSearchParams(hash.substring(1)).get(
       "access_token"
     );
+    const expiresIn = new URLSearchParams(hash.substring(1)).get("expires_in");
     localStorage.setItem("token", JSON.stringify(accessToken));
+
+    const totalTime = Date.now() + expiresIn;
+    localStorage.setItem("expires-in", JSON.stringify(totalTime));
     setToken(accessToken);
 
     //reformat URL

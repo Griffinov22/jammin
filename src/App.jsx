@@ -6,6 +6,7 @@ import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
 import ResultsSection from "./components/ResultsSection";
 import PlayListSection from "./components/PlayListSection";
+import PlayListMenu from "./components/PlayListMenu";
 
 import { Alert, Container } from "@mui/material";
 import { Grid } from "@mui/material";
@@ -24,18 +25,12 @@ function App() {
     async function getProfile(token) {
       const profile = await getUserProfile(token);
       const playlists = await getUserPlaylists(token);
-      if (
-        Object.hasOwn(profile, "error") ||
-        Object.hasOwn(playlists, "error")
-      ) {
-        //get new token
-        console.log("error getting profile or playlists");
-      }
+      // console.log(playlists);
       const myPlaylistData = playlists.map((obj) => {
         return {
-          playListId: obj.id,
           name: obj.name,
           images: obj.images, //array of objects (height, width, url)
+          src: obj["external_urls"].spotify,
         };
       });
       //has valid
@@ -116,6 +111,7 @@ function App() {
             Successfully created playlist
           </Alert>
         )}
+        {user && <PlayListMenu userPlaylists={user.playlists} />}
         <Grid container my={2} direction="row" spacing={2}>
           <ResultsSection
             songsSearch={songsSearch}
