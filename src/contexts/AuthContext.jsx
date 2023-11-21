@@ -5,16 +5,17 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(JSON.parse(localStorage.getItem("token")));
 
   useEffect(() => {
-    if (!token && window.location.hash != "" && false) {
-      openSpotifyForAccessToken();
-    } else if (!token && window.location.hash) {
+    if (window.location.hash) {
       setUserToken(window.location.hash);
+    } else if (!token) {
+      openSpotifyForAccessToken();
     }
   }, []);
 
   const openSpotifyForAccessToken = () => {
     let uri = "https://accounts.spotify.com/authorize";
     uri += "?response_type=token";
+    uri += "&scope=playlist-modify-public,playlist-read-private";
     uri += "&client_id=" + encodeURIComponent(import.meta.env.VITE_CLIENT_ID);
     uri +=
       "&redirect_uri=" + encodeURIComponent(import.meta.env.VITE_SITE_ENDPOINT);
@@ -30,7 +31,7 @@ export const AuthProvider = ({ children }) => {
 
     //reformat URL
     const newURL = window.location.href.split("#")[0];
-    window.history.replaceState({}, document.title, newURL);
+    window.history.replaceState({}, "", newURL);
   };
 
   const value = {

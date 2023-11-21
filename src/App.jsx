@@ -1,41 +1,69 @@
 import "./App.css";
 import { useState, useEffect, useContext } from "react";
-import { getUserProfile } from "./api/spotifyApi";
+import { getUserProfile, getUserPlaylists } from "./api/spotifyApi";
 
 import Header from "./components/Header";
 import SearchBar from "./components/SearchBar";
 import ResultsSection from "./components/ResultsSection";
 import PlayListSection from "./components/PlayListSection";
 
-import { Container } from "@mui/material";
+import { Alert, Container } from "@mui/material";
 import { Grid } from "@mui/material";
 import { useAuth } from "./contexts/AuthContext";
 
 function App() {
   const [songsSearch, setSongsSearch] = useState([]);
+  const [songQuery, setSongQuery] = useState("");
   const [playList, setPlayList] = useState([]);
   const [user, setUser] = useState({});
-  const { token, openSpotifyForAccessToken, setUserToken } = useAuth();
+  const [hasCreated, setHasCreated] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { token, openSpotifyForAccessToken } = useAuth();
 
   useEffect(() => {
     async function getProfile(token) {
       const profile = await getUserProfile(token);
-      if (Object.hasOwn(profile, "error")) {
+      const playlists = await getUserPlaylists(token);
+      if (
+        Object.hasOwn(profile, "error") ||
+        Object.hasOwn(playlists, "error")
+      ) {
         //get new token
-        //FIX ERROR IN HERE
-        localStorage.removeItem("token");
-        openSpotifyForAccessToken();
+        console.log("error getting profile or playlists");
       }
+      const myPlaylistData = playlists.map((obj) => {
+        return {
+          playListId: obj.id,
+          name: obj.name,
+          images: obj.images, //array of objects (height, width, url)
+        };
+      });
       //has valid
       setUser({
         username: profile.display_name,
         id: profile.id,
-        ...(profile.images.length > 0 && { userPic: profile.images[0] }),
+        ...(profile.images.length > 0 && { userPic: profile.images[0].url }),
+        playlists: myPlaylistData,
       });
+      //////////////////////////playlists//////////////////////////
     }
 
     getProfile(token);
   }, []);
+
+  useEffect(() => {
+    if (hasCreated) {
+      setSongsSearch([]);
+      setSongQuery("");
+      setPlayList([]);
+      setHasCreated(false);
+      setShowSuccess(true);
+      //show success for 2 seconds
+      setTimeout(() => {
+        setShowSuccess(false);
+      }, 2000);
+    }
+  });
 
   const addSongToPlayList = (id) => {
     if (!songsSearch) return;
@@ -77,7 +105,17 @@ function App() {
     <>
       <Header />
       <Container maxWidth="md">
-        <SearchBar setSongsSearch={setSongsSearch} user={user} />
+        <SearchBar
+          setSongsSearch={setSongsSearch}
+          user={user}
+          songQuery={songQuery}
+          setSongQuery={setSongQuery}
+        />
+        {showSuccess && (
+          <Alert severity="success" sx={{ marginTop: "1rem" }}>
+            Successfully created playlist
+          </Alert>
+        )}
         <Grid container my={2} direction="row" spacing={2}>
           <ResultsSection
             songsSearch={songsSearch}
@@ -86,6 +124,8 @@ function App() {
           <PlayListSection
             playList={playList}
             removeSongFromPlayList={removeSongFromPlayList}
+            user={user}
+            setHasCreated={setHasCreated}
           />
         </Grid>
       </Container>

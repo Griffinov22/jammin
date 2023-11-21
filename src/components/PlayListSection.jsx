@@ -1,12 +1,44 @@
 import { useState, useLayoutEffect, useRef } from "react";
-import { blue, grey } from "@mui/material/colors";
+import { blue, grey, red } from "@mui/material/colors";
 import Track from "./Track";
 import { Grid, Box, Typography, Button } from "@mui/material";
 import { TextField } from "@mui/material";
+import { createPlaylist } from "../api/spotifyApi";
+import { useAuth } from "../contexts/AuthContext";
 
-const PlayListSection = ({ playList, removeSongFromPlayList }) => {
+const PlayListSection = ({
+  playList,
+  removeSongFromPlayList,
+  user,
+  setHasCreated,
+}) => {
   const [playListName, setPlayListName] = useState("");
+  const [error, setError] = useState(false);
+
   const startedList = playList.length > 0;
+  const { token } = useAuth();
+
+  const handleClick = async (e) => {
+    if (playListName && playList.length > 0 && user) {
+      const uriList = playList.map((obj) => obj.uri);
+      const snapshot = await createPlaylist(
+        user.id,
+        token,
+        playListName,
+        uriList
+      );
+      if (snapshot) {
+        setHasCreated(true);
+        setPlayListName("");
+        alert("worked!");
+      } else {
+        alert("error!");
+      }
+    } else {
+      //turn playlist name red
+      setError(true);
+    }
+  };
 
   const overflowStyle = {
     overflowY: "scroll",
@@ -36,7 +68,10 @@ const PlayListSection = ({ playList, removeSongFromPlayList }) => {
               id="playlist-name"
               name="playlistName"
               value={playListName}
-              onChange={(e) => setPlayListName(e.target.value)}
+              onChange={(e) => {
+                setPlayListName(e.target.value);
+                setError(false);
+              }}
               variant="standard"
               placeholder="playlist title..."
               size="large"
@@ -56,8 +91,8 @@ const PlayListSection = ({ playList, removeSongFromPlayList }) => {
                 marginBottom: "0.5rem",
 
                 "& ::placeholder": {
-                  color: blue[600],
-                  opacity: "60%",
+                  color: error ? red[500] : blue[600],
+                  opacity: error ? "100%" : "60%",
                   fontWeight: 700,
                 },
               }}
@@ -87,7 +122,7 @@ const PlayListSection = ({ playList, removeSongFromPlayList }) => {
               ))}
           </Box>
           {startedList && (
-            <Button type="submit" variant="contained">
+            <Button type="submit" variant="contained" onClick={handleClick}>
               Submit
             </Button>
           )}

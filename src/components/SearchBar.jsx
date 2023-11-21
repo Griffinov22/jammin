@@ -3,18 +3,17 @@ import { deepPurple, grey } from "@mui/material/colors";
 import { searchSpotifySong } from "../api/spotifyApi";
 import { useAuth } from "../contexts/AuthContext";
 
-const SearchBar = ({ setSongsSearch, user }) => {
+const SearchBar = ({ setSongsSearch, user, songQuery, setSongQuery }) => {
   const { openSpotifyForAccessToken, setUserToken, token } = useAuth();
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const query = e.target.querySelector("input").value; //weird because MUI div layering
-    if (query == "") {
+    if (songQuery == "") {
       //clear search
       setSongsSearch([]);
       return;
     }
-    const songQuery = await searchSpotifySong(query, token);
-    if (Object.hasOwn(songQuery, "error")) {
+    const findSongs = await searchSpotifySong(songQuery, token);
+    if (Object.hasOwn(findSongs, "error")) {
       //get new token
       localStorage.removeItem("token");
       if (!window.location.hash) {
@@ -22,9 +21,8 @@ const SearchBar = ({ setSongsSearch, user }) => {
       }
       setUserToken(window.location.hash);
     }
-    console.log(songQuery);
 
-    const mapSongs = songQuery.tracks.items.map((obj) => {
+    const mapSongs = findSongs.tracks.items.map((obj) => {
       return {
         id: obj.id,
         uri: obj.uri,
@@ -50,6 +48,8 @@ const SearchBar = ({ setSongsSearch, user }) => {
               label="Search song..."
               fontSize={12}
               size="small"
+              onChange={(e) => setSongQuery(e.target.value)}
+              value={songQuery}
               sx={{
                 marginTop: "2rem",
                 width: "50%",
@@ -81,14 +81,13 @@ const SearchBar = ({ setSongsSearch, user }) => {
       )}
 
       {user.userPic ? (
-        <Avatar alt="user" src={user.userPic} />
+        <Avatar alt="user" src={user.userPic} sx={{ marginInline: "auto" }} />
       ) : (
         <Avatar
           src={user.userPic}
           alt={user.username ? user.username : "profile pic"}
           sx={{
             bgcolor: deepPurple[500],
-            textAlign: "center",
             marginInline: "auto",
           }}
         >

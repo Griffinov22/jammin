@@ -34,3 +34,72 @@ export const getUserProfile = async (token) => {
 
   return userJson;
 };
+
+export const createPlaylist = async (userId, token, playListName, uris) => {
+  try {
+    const playListData = await fetch(
+      `https://api.spotify.com/v1/users/${userId}/playlists`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name: playListName,
+        }),
+      }
+    );
+    if (!playListData.status == 201) {
+      throw new Error();
+    }
+    const playListJson = await playListData.json();
+
+    //get id of created playlist
+    if (!Object.hasOwn(playListJson, "id")) {
+      throw new Error();
+    }
+    const { id } = playListJson;
+    const addSongsData = await fetch(
+      `https://api.spotify.com/v1/playlists/${id}/tracks`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+        body: JSON.stringify({
+          uris,
+        }),
+      }
+    );
+    const addSongsJson = await addSongsData.json();
+
+    return addSongsJson.snapshot_id;
+  } catch (err) {
+    alert("the creation of the playlist ran into an error");
+    alert(err);
+  }
+};
+
+export const getUserPlaylists = async (token) => {
+  try {
+    const playlistData = await fetch(
+      "https://api.spotify.com/v1/me/playlists?limit=10",
+      {
+        headers: {
+          Authorization: "Bearer " + token,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    if (Object.hasOwn(playlistData, "error")) {
+      throw new error();
+    }
+    const playlistJson = await playlistData.json();
+    const { items } = playlistJson;
+    return items;
+  } catch (err) {
+    alert("error encountered fetching playlists");
+  }
+};
