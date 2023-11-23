@@ -1,12 +1,25 @@
-import { Box, Typography } from "@mui/material";
+import { useState } from "react";
+import { Box, Button, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
 
-const PlayListItem = ({ name, src, imageSrc }) => {
+const PlayListItem = ({ name, src, imageSrc, setSelectedPlaylists }) => {
   const handleClick = (e) => {
-    window.open(src, "_blank");
+    if (e.shiftKey || e.altKey) {
+      const containerBox = e.target.closest(".MuiBox-root");
+      if (containerBox.classList.contains("grey-bg")) {
+        setSelectedPlaylists((prev) => {
+          return prev.filter((x) => x != src);
+        });
+      } else {
+        setSelectedPlaylists((prev) => [...prev, src]);
+      }
+      e.target.closest(".MuiBox-root").classList.toggle("grey-bg");
+    } else {
+      window.open(src, "_blank");
+    }
   };
 
-  const hasImage = imageSrc.length > 0;
+  const hasImage = imageSrc.length >= 0;
 
   return (
     <Box
@@ -45,35 +58,51 @@ const PlayListItem = ({ name, src, imageSrc }) => {
 // USED BELOW \/
 
 const PlayListMenu = ({ userPlaylists }) => {
-  //   console.log(userPlaylists);
+  const [selectedPlaylists, setSelectedPlaylists] = useState([]);
+
+  const showMergeButton = selectedPlaylists.length >= 2;
+
   return (
-    <Box
-      bgcolor={grey[100]}
-      width="100%"
-      my={2}
-      display="flex"
-      alignItems="center"
-      borderRadius="50vw"
-      px={4}
-      py={1}
-      sx={{
-        overflowX: "scroll",
-        "&::-webkit-scrollbar": {
-          display: "none",
-        },
-      }}
-    >
-      {userPlaylists.map((obj, ind) => {
-        return (
-          <PlayListItem
-            key={ind}
-            name={obj.name}
-            src={obj.src}
-            imageSrc={obj.images}
-          />
-        );
-      })}
-    </Box>
+    <>
+      <Box
+        bgcolor={grey[100]}
+        width="100%"
+        my={2}
+        display="flex"
+        columnGap={1}
+        alignItems="center"
+        borderRadius="50vw"
+        px={1}
+        py={1}
+        sx={{
+          overflowX: "scroll",
+          "&::-webkit-scrollbar": {
+            display: "none",
+          },
+        }}
+      >
+        {userPlaylists &&
+          userPlaylists.map((obj, ind) => {
+            return (
+              <PlayListItem
+                key={ind}
+                name={obj.name}
+                src={obj.src}
+                imageSrc={obj.images}
+                setSelectedPlaylists={setSelectedPlaylists}
+              />
+            );
+          })}
+      </Box>
+      {showMergeButton && (
+        <Button
+          variant="contained"
+          sx={{ display: "block", marginInline: "auto" }}
+        >
+          Merge Playlists
+        </Button>
+      )}
+    </>
   );
 };
 
