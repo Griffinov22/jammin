@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
+import { getPlaylistTracks } from "../api/spotifyApi";
+import { useAuth } from "../contexts/AuthContext";
 
 const PlayListItem = ({ name, src, imageSrc, setSelectedPlaylists }) => {
   const handleClick = (e) => {
@@ -57,10 +59,17 @@ const PlayListItem = ({ name, src, imageSrc, setSelectedPlaylists }) => {
 
 // USED BELOW \/
 
-const PlayListMenu = ({ userPlaylists }) => {
+async function get(u, t) {
+  const a = await getPlaylistTracks(u, t);
+}
+
+const PlayListMenu = ({ user }) => {
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
 
   const showMergeButton = selectedPlaylists.length >= 2;
+  const { token } = useAuth();
+
+  if (Object.keys(user).length > 0) get(user.playlists[0].tracks.href, token);
 
   return (
     <>
@@ -81,8 +90,8 @@ const PlayListMenu = ({ userPlaylists }) => {
           },
         }}
       >
-        {userPlaylists &&
-          userPlaylists.map((obj, ind) => {
+        {Object.keys(user).length > 0 &&
+          user.playlists.map((obj, ind) => {
             return (
               <PlayListItem
                 key={ind}

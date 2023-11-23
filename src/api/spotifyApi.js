@@ -103,3 +103,18 @@ export const getUserPlaylists = async (token) => {
     alert("error encountered fetching playlists");
   }
 };
+
+export const getPlaylistTracks = async (href, token) => {
+  const songsData = await fetch(href, {
+    headers: {
+      Authorization: "Bearer " + token,
+    },
+  });
+  const { items } = await songsData.json();
+
+  const tracks = items.map((obj) => {
+    return obj.track;
+  });
+  console.log(tracks);
+  // return tracks;
+};

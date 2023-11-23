@@ -25,20 +25,12 @@ function App() {
     async function getProfile(token) {
       const profile = await getUserProfile(token);
       const playlists = await getUserPlaylists(token);
-      // console.log(playlists);
-      const myPlaylistData = playlists.map((obj) => {
-        return {
-          name: obj.name,
-          images: obj.images, //array of objects (height, width, url)
-          src: obj["external_urls"].spotify,
-        };
-      });
       //has valid
       setUser({
         username: profile.display_name,
         id: profile.id,
         ...(profile.images.length > 0 && { userPic: profile.images[0].url }),
-        playlists: myPlaylistData,
+        playlists,
       });
       //////////////////////////playlists//////////////////////////
     }
@@ -111,7 +103,7 @@ function App() {
             Successfully created playlist
           </Alert>
         )}
-        {user && <PlayListMenu userPlaylists={user.playlists} />}
+        {user && <PlayListMenu user={user} />}
         <Grid container my={2} direction="row" spacing={2}>
           <ResultsSection
             songsSearch={songsSearch}
