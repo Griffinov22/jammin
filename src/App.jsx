@@ -103,7 +103,9 @@ function App() {
             Successfully created playlist
           </Alert>
         )}
-        {user && <PlayListMenu user={user} />}
+        {Object.keys(user).length > 0 && (
+          <PlayListMenu playlists={user.playlists} />
+        )}
         <Grid container my={2} direction="row" spacing={2}>
           <ResultsSection
             songsSearch={songsSearch}

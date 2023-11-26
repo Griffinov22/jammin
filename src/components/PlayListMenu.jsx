@@ -1,19 +1,28 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, Button, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { getPlaylistTracks } from "../api/spotifyApi";
 import { useAuth } from "../contexts/AuthContext";
 
-const PlayListItem = ({ name, src, imageSrc, setSelectedPlaylists }) => {
+const PlayListItem = ({
+  name,
+  src,
+  uri,
+  href,
+  imageSrc,
+  setSelectedPlaylists,
+}) => {
+  //   console.log(name, src, imageSrc, setSelectedPlaylists);
+
   const handleClick = (e) => {
     if (e.shiftKey || e.altKey) {
       const containerBox = e.target.closest(".MuiBox-root");
       if (containerBox.classList.contains("grey-bg")) {
         setSelectedPlaylists((prev) => {
-          return prev.filter((x) => x != src);
+          return prev.filter((x) => x != href);
         });
       } else {
-        setSelectedPlaylists((prev) => [...prev, src]);
+        setSelectedPlaylists((prev) => [...prev, href]);
       }
       e.target.closest(".MuiBox-root").classList.toggle("grey-bg");
     } else {
@@ -59,17 +68,26 @@ const PlayListItem = ({ name, src, imageSrc, setSelectedPlaylists }) => {
 
 // USED BELOW \/
 
-async function get(u, t) {
+async function asyncGetter(u, t) {
   const a = await getPlaylistTracks(u, t);
+  return a;
 }
 
-const PlayListMenu = ({ user }) => {
+const PlayListMenu = ({ playlists }) => {
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
 
   const showMergeButton = selectedPlaylists.length >= 2;
   const { token } = useAuth();
+  //   console.log(playlists);
 
-  if (Object.keys(user).length > 0) get(user.playlists[0].tracks.href, token);
+  if (selectedPlaylists.length > 0) {
+    let tracks = [];
+    for (let i = 0; i < selectedPlaylists.length; i++) {
+      //   tracks.push(asyncGetter(selectedPlaylists[i], token));
+      console.log(asyncGetter(selectedPlaylists[i], token));
+    }
+    console.log(tracks);
+  }
 
   return (
     <>
@@ -90,18 +108,19 @@ const PlayListMenu = ({ user }) => {
           },
         }}
       >
-        {Object.keys(user).length > 0 &&
-          user.playlists.map((obj, ind) => {
-            return (
-              <PlayListItem
-                key={ind}
-                name={obj.name}
-                src={obj.src}
-                imageSrc={obj.images}
-                setSelectedPlaylists={setSelectedPlaylists}
-              />
-            );
-          })}
+        {playlists.map((obj, ind) => {
+          return (
+            <PlayListItem
+              key={ind}
+              name={obj.name}
+              src={obj.src}
+              href={obj.href}
+              uri={obj.uri}
+              imageSrc={obj.images}
+              setSelectedPlaylists={setSelectedPlaylists}
+            />
+          );
+        })}
       </Box>
       {showMergeButton && (
         <Button

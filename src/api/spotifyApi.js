@@ -115,6 +115,5 @@ export const getPlaylistTracks = async (href, token) => {
   const tracks = items.map((obj) => {
     return obj.track;
   });
-  console.log(tracks);
-  // return tracks;
+  return tracks;
 };
