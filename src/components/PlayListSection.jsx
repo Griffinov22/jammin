@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { blue, grey, red } from "@mui/material/colors";
 import Track from "./Track";
 import { Grid, Box, Typography, Button } from "@mui/material";
@@ -11,15 +11,17 @@ const PlayListSection = ({
   removeSongFromPlayList,
   user,
   setHasCreated,
+  clickedMerge,
 }) => {
   const [playListName, setPlayListName] = useState("");
   const [error, setError] = useState(false);
+  const ref = useRef();
 
   const startedList = playList.length > 0;
   const { token } = useAuth();
 
   const handleClick = async (e) => {
-    if (playListName && playList.length > 0 && user) {
+    if (playListName && playList.length > 0) {
       const uriList = playList.map((obj) => obj.uri);
       const snapshot = await createPlaylist(
         user.id,
@@ -122,7 +124,12 @@ const PlayListSection = ({
               ))}
           </Box>
           {startedList && (
-            <Button type="submit" variant="contained" onClick={handleClick}>
+            <Button
+              type="submit"
+              variant="contained"
+              onClick={handleClick}
+              ref={ref}
+            >
               Submit
             </Button>
           )}

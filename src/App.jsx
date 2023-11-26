@@ -36,7 +36,7 @@ function App() {
     }
 
     getProfile(token);
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (hasCreated) {
@@ -50,7 +50,7 @@ function App() {
         setShowSuccess(false);
       }, 2000);
     }
-  });
+  }, [hasCreated]);
 
   const addSongToPlayList = (id) => {
     if (!songsSearch) return;
@@ -104,7 +104,7 @@ function App() {
           </Alert>
         )}
         {Object.keys(user).length > 0 && (
-          <PlayListMenu playlists={user.playlists} />
+          <PlayListMenu playlists={user.playlists} setPlayList={setPlayList} />
         )}
         <Grid container my={2} direction="row" spacing={2}>
           <ResultsSection

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Avatar, Box, Button, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import { getPlaylistTracks } from "../api/spotifyApi";
 import { useAuth } from "../contexts/AuthContext";
@@ -12,8 +12,6 @@ const PlayListItem = ({
   imageSrc,
   setSelectedPlaylists,
 }) => {
-  //   console.log(name, src, imageSrc, setSelectedPlaylists);
-
   const handleClick = (e) => {
     if (e.shiftKey || e.altKey) {
       const containerBox = e.target.closest(".MuiBox-root");
@@ -30,7 +28,7 @@ const PlayListItem = ({
     }
   };
 
-  const hasImage = imageSrc.length >= 0;
+  const hasImage = imageSrc.length > 0;
 
   return (
     <Box
@@ -48,7 +46,13 @@ const PlayListItem = ({
         },
       }}
     >
-      <img src={imageSrc[0].url} alt="playlist" width={48} />
+      {hasImage ? (
+        <img src={imageSrc[0].url} alt="playlist" width={48} />
+      ) : (
+        <Avatar alt={"playlist: " + name} width={48}>
+          P
+        </Avatar>
+      )}
       <Typography
         variant="h6"
         component="p"
@@ -68,26 +72,39 @@ const PlayListItem = ({
 
 // USED BELOW \/
 
-async function asyncGetter(u, t) {
-  const a = await getPlaylistTracks(u, t);
-  return a;
-}
-
-const PlayListMenu = ({ playlists }) => {
+const PlayListMenu = ({ playlists, setPlayList, setClickedMerge }) => {
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
 
   const showMergeButton = selectedPlaylists.length >= 2;
   const { token } = useAuth();
-  //   console.log(playlists);
 
-  if (selectedPlaylists.length > 0) {
-    let tracks = [];
-    for (let i = 0; i < selectedPlaylists.length; i++) {
-      //   tracks.push(asyncGetter(selectedPlaylists[i], token));
-      console.log(asyncGetter(selectedPlaylists[i], token));
+  useEffect(() => {
+    async function asyncGetter(selectedPlaylists, token) {
+      let tracks = [];
+      for (let i = 0; i < selectedPlaylists.length; i++) {
+        const findSongs = await getPlaylistTracks(selectedPlaylists[i], token);
+        const mapSongs = findSongs.map((obj) => {
+          return {
+            id: obj.id,
+            uri: obj.uri,
+            href: obj.external_urls.spotify,
+            songTitle: obj.name,
+            artist: [...obj.artists.map((obj) => obj.name)],
+            album: obj.name,
+          };
+        });
+        tracks.push(...mapSongs);
+      }
+      setPlayList(tracks);
     }
-    console.log(tracks);
-  }
+
+    if (selectedPlaylists.length > 0) {
+      asyncGetter(selectedPlaylists, token);
+    } else {
+      //remove playlist from playlist section
+      setPlayList([]);
+    }
+  }, [selectedPlaylists]);
 
   return (
     <>
@@ -101,6 +118,7 @@ const PlayListMenu = ({ playlists }) => {
         borderRadius="50vw"
         px={1}
         py={1}
+        id="playlist-menu-wrapper"
         sx={{
           overflowX: "scroll",
           "&::-webkit-scrollbar": {
@@ -126,6 +144,7 @@ const PlayListMenu = ({ playlists }) => {
         <Button
           variant="contained"
           sx={{ display: "block", marginInline: "auto" }}
+          onClick={setClickedMerge(true)}
         >
           Merge Playlists
         </Button>

@@ -84,7 +84,6 @@ const SearchBar = ({ setSongsSearch, user, songQuery, setSongQuery }) => {
         <Avatar alt="user" src={user.userPic} sx={{ marginInline: "auto" }} />
       ) : (
         <Avatar
-          src={user.userPic}
           alt={user.username ? user.username : "profile pic"}
           sx={{
             bgcolor: deepPurple[500],

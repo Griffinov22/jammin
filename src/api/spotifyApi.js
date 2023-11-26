@@ -110,10 +110,6 @@ export const getPlaylistTracks = async (href, token) => {
       Authorization: "Bearer " + token,
     },
   });
-  const { items } = await songsData.json();
-
-  const tracks = items.map((obj) => {
-    return obj.track;
-  });
-  return tracks;
+  const songsJson = await songsData.json();
+  return songsJson.tracks.items.map((obj) => obj.track);
 };
