@@ -10,9 +10,25 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (window.location.hash) {
       setUserToken(window.location.hash);
-    } else if (!token || Date.now() >= expireTime) {
+    } else if (
+      !token ||
+      (expireTime && Date.now() > Date.now() + expireTime * 1000)
+    ) {
       openSpotifyForAccessToken();
     }
+  }, []);
+
+  useEffect(() => {
+    let timeout;
+    if (expireTime != null) {
+      timeout = setTimeout(() => {
+        openSpotifyForAccessToken();
+      }, expireTime * 1000);
+    }
+
+    return () => {
+      timeout && clearTimeout(timeout);
+    };
   }, []);
 
   const openSpotifyForAccessToken = () => {
@@ -31,10 +47,10 @@ export const AuthProvider = ({ children }) => {
     );
     const expiresIn = new URLSearchParams(hash.substring(1)).get("expires_in");
     localStorage.setItem("token", JSON.stringify(accessToken));
+    localStorage.setItem("expires-in", JSON.stringify(expiresIn));
 
-    const totalTime = Date.now() + expiresIn;
-    localStorage.setItem("expires-in", JSON.stringify(totalTime));
     setToken(accessToken);
+    setExpireTime(expiresIn);
 
     //reformat URL
     const newURL = window.location.href.split("#")[0];
@@ -46,7 +62,11 @@ export const AuthProvider = ({ children }) => {
     openSpotifyForAccessToken,
     setUserToken,
   };
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={value}>
+      {token && children}
+    </AuthContext.Provider>
+  );
 };
 
 export const useAuth = () => {

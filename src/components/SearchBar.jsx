@@ -38,7 +38,7 @@ const SearchBar = ({ setSongsSearch, user, songQuery, setSongQuery }) => {
   return (
     <Box pt={4}>
       <Typography variant="h5" textAlign="center" color={grey[700]}>
-        A simple way to make playlist for your Spotify
+        A simple way to <i>create,edit, and merge</i> playlist for your Spotify
       </Typography>
       <Box textAlign="center">
         <div className="input-border-round">

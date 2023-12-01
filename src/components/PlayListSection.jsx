@@ -12,8 +12,10 @@ const PlayListSection = ({
   user,
   setHasCreated,
   clickedMerge,
+  playListTitle,
+  setPlayListTitle,
 }) => {
-  const [playListName, setPlayListName] = useState("");
+  //consider refactor if have more than one playlist selected from user
   const [error, setError] = useState(false);
   const ref = useRef();
 
@@ -21,17 +23,17 @@ const PlayListSection = ({
   const { token } = useAuth();
 
   const handleClick = async (e) => {
-    if (playListName && playList.length > 0) {
+    if (playListTitle && playList.length > 0) {
       const uriList = playList.map((obj) => obj.uri);
       const snapshot = await createPlaylist(
         user.id,
         token,
-        playListName,
+        playListTitle,
         uriList
       );
       if (snapshot) {
         setHasCreated(true);
-        setPlayListName("");
+        setPlayListTitle("");
         alert("worked!");
       } else {
         alert("error!");
@@ -69,9 +71,9 @@ const PlayListSection = ({
             <TextField
               id="playlist-name"
               name="playlistName"
-              value={playListName}
+              value={playListTitle}
               onChange={(e) => {
-                setPlayListName(e.target.value);
+                setPlayListTitle(e.target.value);
                 setError(false);
               }}
               variant="standard"

@@ -76,8 +76,7 @@ export const createPlaylist = async (userId, token, playListName, uris) => {
 
     return addSongsJson.snapshot_id;
   } catch (err) {
-    alert("the creation of the playlist ran into an error");
-    alert(err);
+    console.log(err);
   }
 };
 
@@ -94,13 +93,13 @@ export const getUserPlaylists = async (token) => {
     );
 
     if (Object.hasOwn(playlistData, "error")) {
-      throw new error();
+      throw new Error();
     }
     const playlistJson = await playlistData.json();
     const { items } = playlistJson;
     return items;
   } catch (err) {
-    alert("error encountered fetching playlists");
+    console.log(err);
   }
 };
 

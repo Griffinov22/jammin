@@ -11,16 +11,17 @@ const PlayListItem = ({
   href,
   imageSrc,
   setSelectedPlaylists,
+  setPlayListTitle,
 }) => {
   const handleClick = (e) => {
     if (e.shiftKey || e.altKey) {
       const containerBox = e.target.closest(".MuiBox-root");
       if (containerBox.classList.contains("grey-bg")) {
-        setSelectedPlaylists((prev) => {
-          return prev.filter((x) => x != href);
-        });
+        setSelectedPlaylists((prev) => prev.filter((x) => x != href));
+        setPlayListTitle(name);
       } else {
         setSelectedPlaylists((prev) => [...prev, href]);
+        setPlayListTitle(name);
       }
       e.target.closest(".MuiBox-root").classList.toggle("grey-bg");
     } else {
@@ -72,7 +73,7 @@ const PlayListItem = ({
 
 // USED BELOW \/
 
-const PlayListMenu = ({ playlists, setPlayList, setClickedMerge }) => {
+const PlayListMenu = ({ playlists, setPlayList, setPlayListTitle }) => {
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
 
   const showMergeButton = selectedPlaylists.length >= 2;
@@ -136,6 +137,7 @@ const PlayListMenu = ({ playlists, setPlayList, setClickedMerge }) => {
               uri={obj.uri}
               imageSrc={obj.images}
               setSelectedPlaylists={setSelectedPlaylists}
+              setPlayListTitle={setPlayListTitle}
             />
           );
         })}
@@ -144,7 +146,6 @@ const PlayListMenu = ({ playlists, setPlayList, setClickedMerge }) => {
         <Button
           variant="contained"
           sx={{ display: "block", marginInline: "auto" }}
-          onClick={setClickedMerge(true)}
         >
           Merge Playlists
         </Button>
