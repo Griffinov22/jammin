@@ -12,31 +12,38 @@ const PlayListSection = ({
   user,
   setHasCreated,
   clickedMerge,
-  playListTitle,
-  setPlayListTitle,
+  playListTitles,
+  setPlayListTitles,
 }) => {
   //consider refactor if have more than one playlist selected from user
+  const [currTitle, setCurrTitle] = useState("");
   const [error, setError] = useState(false);
   const ref = useRef();
+
+  useEffect(() => {
+    //if selected more than one playlist to merge, do not show a title
+    playListTitles.length == 1
+      ? setCurrTitle(playListTitles[0])
+      : setCurrTitle("");
+  }, [playListTitles]);
 
   const startedList = playList.length > 0;
   const { token } = useAuth();
 
   const handleClick = async (e) => {
-    if (playListTitle && playList.length > 0) {
+    if (playListTitles && playList.length > 0) {
       const uriList = playList.map((obj) => obj.uri);
-      const snapshot = await createPlaylist(
+      const tryCreatePlaylist = await createPlaylist(
         user.id,
         token,
-        playListTitle,
+        currTitle,
         uriList
       );
-      if (snapshot) {
+      if (tryCreatePlaylist) {
         setHasCreated(true);
-        setPlayListTitle("");
-        alert("worked!");
+        setPlayListTitles([]);
       } else {
-        alert("error!");
+        alert("error submitting data to Spotify!");
       }
     } else {
       //turn playlist name red
@@ -71,9 +78,9 @@ const PlayListSection = ({
             <TextField
               id="playlist-name"
               name="playlistName"
-              value={playListTitle}
+              value={currTitle}
               onChange={(e) => {
-                setPlayListTitle(e.target.value);
+                setCurrTitle(e.target.value);
                 setError(false);
               }}
               variant="standard"

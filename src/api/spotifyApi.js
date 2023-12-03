@@ -51,7 +51,7 @@ export const createPlaylist = async (userId, token, playListName, uris) => {
       }
     );
     if (!playListData.status == 201) {
-      throw new Error();
+      throw new Error("Not a 201 status");
     }
     const playListJson = await playListData.json();
 

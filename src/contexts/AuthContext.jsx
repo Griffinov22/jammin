@@ -10,10 +10,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     if (window.location.hash) {
       setUserToken(window.location.hash);
-    } else if (
-      !token ||
-      (expireTime && Date.now() > Date.now() + expireTime * 1000)
-    ) {
+    } else if (!token || (expireTime && Date.now() > expireTime)) {
       openSpotifyForAccessToken();
     }
   }, []);
@@ -23,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     if (expireTime != null) {
       timeout = setTimeout(() => {
         openSpotifyForAccessToken();
-      }, expireTime * 1000);
+      }, 3600 * 1000);
     }
 
     return () => {
@@ -47,7 +44,10 @@ export const AuthProvider = ({ children }) => {
     );
     const expiresIn = new URLSearchParams(hash.substring(1)).get("expires_in");
     localStorage.setItem("token", JSON.stringify(accessToken));
-    localStorage.setItem("expires-in", JSON.stringify(expiresIn));
+    localStorage.setItem(
+      "expires-in",
+      JSON.stringify(Date.now() + expiresIn * 1000)
+    );
 
     setToken(accessToken);
     setExpireTime(expiresIn);

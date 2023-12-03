@@ -16,7 +16,7 @@ function App() {
   const [songsSearch, setSongsSearch] = useState([]);
   const [songQuery, setSongQuery] = useState("");
   const [playList, setPlayList] = useState([]);
-  const [playListTitle, setPlayListTitle] = useState([]);
+  const [playListTitles, setPlayListTitles] = useState([]);
   const [user, setUser] = useState({});
   const [hasCreated, setHasCreated] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
@@ -108,7 +108,7 @@ function App() {
           <PlayListMenu
             playlists={user.playlists}
             setPlayList={setPlayList}
-            setPlayListTitle={setPlayListTitle}
+            setPlayListTitles={setPlayListTitles}
           />
         )}
         <Grid container my={2} direction="row" spacing={2}>
@@ -118,8 +118,8 @@ function App() {
           />
           <PlayListSection
             playList={playList}
-            playListTitle={playListTitle}
-            setPlayListTitle={setPlayListTitle}
+            playListTitles={playListTitles}
+            setPlayListTitles={setPlayListTitles}
             removeSongFromPlayList={removeSongFromPlayList}
             user={user}
             setHasCreated={setHasCreated}
