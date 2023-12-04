@@ -9,11 +9,6 @@ export const searchSpotifySong = async (queryString, token) => {
     {
       headers: {
         Authorization: "Bearer " + token,
-        // "Content-Type": "application/json",
-        // "With-Credentials": true,
-        // "Access-Control-Allow-Headers": true,
-        // "Access-Control-Allow-Credentials": true,
-        // "Access-Control-Allow-Origin": "*",
       },
     }
   );
@@ -111,4 +106,61 @@ export const getPlaylistTracks = async (href, token) => {
   });
   const songsJson = await songsData.json();
   return songsJson.tracks.items.map((obj) => obj.track);
+};
+
+export const udpatePlaylist = async (
+  token,
+  matchedPlaylist,
+  uris,
+  currTitle
+) => {
+  //get playlist songs, delete all old songs, load all new songs from uris,
+  const oldSongsFromPlaylist = await getPlaylistTracks(
+    matchedPlaylist.href,
+    token
+  );
+
+  const deleteSongsData = await fetch(
+    `https://api.spotify.com/v1/playlists/${matchedPlaylist.id}/tracks`,
+    {
+      method: "DELETE",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({
+        tracks: oldSongsFromPlaylist.map((obj) => {
+          return { uri: obj.uri };
+        }),
+      }),
+    }
+  );
+  const deleteSongsJson = await deleteSongsData.json();
+
+  const addSongsData = await fetch(
+    `https://api.spotify.com/v1/playlists/${matchedPlaylist.id}/tracks`,
+    {
+      method: "POST",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({
+        uris,
+      }),
+    }
+  );
+  const addSongsJson = await addSongsData.json();
+
+  //udpate playlist name
+  const updateNameData = await fetch(
+    `https://api.spotify.com/v1/playlists/${matchedPlaylist.id}`,
+    {
+      method: "PUT",
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+      body: JSON.stringify({ name: currTitle }),
+    }
+  );
+
+  return { status: 200 };
 };

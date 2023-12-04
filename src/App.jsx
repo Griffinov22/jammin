@@ -11,6 +11,7 @@ import PlayListMenu from "./components/PlayListMenu";
 import { Alert, Container } from "@mui/material";
 import { Grid } from "@mui/material";
 import { useAuth } from "./contexts/AuthContext";
+import Modal from "./components/Modal";
 
 function App() {
   const [songsSearch, setSongsSearch] = useState([]);
@@ -19,7 +20,10 @@ function App() {
   const [playListTitles, setPlayListTitles] = useState([]);
   const [user, setUser] = useState({});
   const [hasCreated, setHasCreated] = useState(false);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [successState, setSuccessState] = useState({
+    value: false,
+    message: "",
+  });
   const { token, openSpotifyForAccessToken } = useAuth();
 
   useEffect(() => {
@@ -45,13 +49,23 @@ function App() {
       setSongQuery("");
       setPlayList([]);
       setHasCreated(false);
-      setShowSuccess(true);
+      setPlayListTitles([]);
+      const message =
+        playListTitles.length == 1
+          ? "Successfully updated playlist"
+          : "Success created playlist";
+      setSuccessState({ value: true, message });
       //show success for 2 seconds
       setTimeout(() => {
-        setShowSuccess(false);
+        setSuccessState({ value: false, message: "" });
       }, 2000);
     }
   }, [hasCreated]);
+
+  useEffect(() => {
+    setSongQuery("");
+    setSongsSearch([]);
+  }, [playListTitles]);
 
   const addSongToPlayList = (id) => {
     if (!songsSearch) return;
@@ -99,9 +113,13 @@ function App() {
           songQuery={songQuery}
           setSongQuery={setSongQuery}
         />
-        {showSuccess && (
+        <Modal
+          open={hasCreated ? true : true}
+          playListTitles={playListTitles}
+        />
+        {successState.value && (
           <Alert severity="success" sx={{ marginTop: "1rem" }}>
-            Successfully created playlist
+            {successState.message}
           </Alert>
         )}
         {Object.keys(user).length > 0 && (
@@ -109,6 +127,7 @@ function App() {
             playlists={user.playlists}
             setPlayList={setPlayList}
             setPlayListTitles={setPlayListTitles}
+            setSongsSearch={setSongsSearch}
           />
         )}
         <Grid container my={2} direction="row" spacing={2}>

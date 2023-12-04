@@ -31,7 +31,8 @@ export const AuthProvider = ({ children }) => {
   const openSpotifyForAccessToken = () => {
     let uri = "https://accounts.spotify.com/authorize";
     uri += "?response_type=token";
-    uri += "&scope=playlist-modify-public,playlist-read-private";
+    uri +=
+      "&scope=playlist-modify-public,playlist-read-private,playlist-modify-private";
     uri += "&client_id=" + encodeURIComponent(import.meta.env.VITE_CLIENT_ID);
     uri +=
       "&redirect_uri=" + encodeURIComponent(import.meta.env.VITE_SITE_ENDPOINT);

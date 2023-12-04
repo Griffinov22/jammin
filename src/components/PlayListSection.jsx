@@ -3,7 +3,7 @@ import { blue, grey, red } from "@mui/material/colors";
 import Track from "./Track";
 import { Grid, Box, Typography, Button } from "@mui/material";
 import { TextField } from "@mui/material";
-import { createPlaylist } from "../api/spotifyApi";
+import { createPlaylist, udpatePlaylist } from "../api/spotifyApi";
 import { useAuth } from "../contexts/AuthContext";
 
 const PlayListSection = ({
@@ -31,22 +31,39 @@ const PlayListSection = ({
   const { token } = useAuth();
 
   const handleClick = async (e) => {
-    if (playListTitles && playList.length > 0) {
+    if (playList.length >= 0 && currTitle) {
       const uriList = playList.map((obj) => obj.uri);
-      const tryCreatePlaylist = await createPlaylist(
-        user.id,
-        token,
-        currTitle,
-        uriList
-      );
-      if (tryCreatePlaylist) {
+      let playListCreation;
+
+      if (playListTitles.length == 1) {
+        //updating playlist
+        const matchedPlaylist = user.playlists.find(
+          (obj) => obj.name == playListTitles[0]
+        );
+        if (!matchedPlaylist) throw new Error();
+        playListCreation = await udpatePlaylist(
+          token,
+          matchedPlaylist,
+          uriList,
+          currTitle
+        );
+      } else {
+        //merging and creating new playlist with new name OR creating fresh playlist
+        playListCreation = await createPlaylist(
+          user.id,
+          token,
+          currTitle,
+          uriList
+        );
+      }
+
+      if (playListCreation) {
         setHasCreated(true);
-        setPlayListTitles([]);
       } else {
         alert("error submitting data to Spotify!");
       }
     } else {
-      //turn playlist name red
+      //turn playlist name red i.e. title was not given and/or playlist has no songs
       setError(true);
     }
   };
@@ -139,7 +156,11 @@ const PlayListSection = ({
               onClick={handleClick}
               ref={ref}
             >
-              Submit
+              {playListTitles.length == 1
+                ? "Update Playlist"
+                : playListTitles.length >= 1
+                ? "Merge Playlist"
+                : "Submit"}
             </Button>
           )}
         </Box>

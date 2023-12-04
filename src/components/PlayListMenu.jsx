@@ -12,6 +12,7 @@ const PlayListItem = ({
   imageSrc,
   setSelectedPlaylists,
   setPlayListTitles,
+  setSongsSearch,
 }) => {
   const handleClick = (e) => {
     if (e.shiftKey || e.altKey) {
@@ -73,7 +74,12 @@ const PlayListItem = ({
 
 // USED BELOW \/
 
-const PlayListMenu = ({ playlists, setPlayList, setPlayListTitles }) => {
+const PlayListMenu = ({
+  playlists,
+  setPlayList,
+  setPlayListTitles,
+  setSongsSearch,
+}) => {
   const [selectedPlaylists, setSelectedPlaylists] = useState([]);
   const { token } = useAuth();
 
@@ -130,12 +136,13 @@ const PlayListMenu = ({ playlists, setPlayList, setPlayListTitles }) => {
             <PlayListItem
               key={ind}
               name={obj.name}
-              src={obj.src}
+              src={obj.external_urls.spotify}
               href={obj.href}
               uri={obj.uri}
               imageSrc={obj.images}
               setSelectedPlaylists={setSelectedPlaylists}
               setPlayListTitles={setPlayListTitles}
+              setSongsSearch={setSongsSearch}
             />
           );
         })}
