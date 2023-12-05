@@ -10,6 +10,7 @@ const PlayListItem = ({
   uri,
   href,
   imageSrc,
+  selectedPlaylists,
   setSelectedPlaylists,
   setPlayListTitles,
   setSongsSearch,
@@ -17,14 +18,13 @@ const PlayListItem = ({
   const handleClick = (e) => {
     if (e.shiftKey || e.altKey) {
       const containerBox = e.target.closest(".MuiBox-root");
-      if (containerBox.classList.contains("grey-bg")) {
+      if (selectedPlaylists.includes(href)) {
         setSelectedPlaylists((prev) => prev.filter((x) => x != href));
         setPlayListTitles((prev) => prev.filter((x) => x != name));
       } else {
         setSelectedPlaylists((prev) => [...prev, href]);
         setPlayListTitles((prev) => [...prev, name]);
       }
-      e.target.closest(".MuiBox-root").classList.toggle("grey-bg");
     } else {
       window.open(src, "_blank");
     }
@@ -42,6 +42,7 @@ const PlayListItem = ({
       columnGap={1}
       sx={{
         borderRadius: "25vw",
+        backgroundColor: selectedPlaylists.includes(href) ? grey[500] : "",
         "&:hover": {
           cursor: "pointer",
           bgcolor: grey[300],
@@ -79,8 +80,9 @@ const PlayListMenu = ({
   setPlayList,
   setPlayListTitles,
   setSongsSearch,
+  selectedPlaylists,
+  setSelectedPlaylists,
 }) => {
-  const [selectedPlaylists, setSelectedPlaylists] = useState([]);
   const { token } = useAuth();
 
   useEffect(() => {
@@ -140,6 +142,7 @@ const PlayListMenu = ({
               href={obj.href}
               uri={obj.uri}
               imageSrc={obj.images}
+              selectedPlaylists={selectedPlaylists}
               setSelectedPlaylists={setSelectedPlaylists}
               setPlayListTitles={setPlayListTitles}
               setSongsSearch={setSongsSearch}

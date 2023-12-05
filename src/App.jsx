@@ -18,8 +18,10 @@ function App() {
   const [songQuery, setSongQuery] = useState("");
   const [playList, setPlayList] = useState([]);
   const [playListTitles, setPlayListTitles] = useState([]);
+  const [selectedPlaylists, setSelectedPlaylists] = useState([]);
   const [user, setUser] = useState({});
   const [hasCreated, setHasCreated] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [successState, setSuccessState] = useState({
     value: false,
     message: "",
@@ -40,8 +42,9 @@ function App() {
       //////////////////////////playlists//////////////////////////
     }
 
+    //get new profile when token is reset or created to show new playlists
     getProfile(token);
-  }, [token]);
+  }, [token, hasCreated]);
 
   useEffect(() => {
     if (hasCreated) {
@@ -50,6 +53,7 @@ function App() {
       setPlayList([]);
       setHasCreated(false);
       setPlayListTitles([]);
+      setSelectedPlaylists([]);
       const message =
         playListTitles.length == 1
           ? "Successfully updated playlist"
@@ -113,10 +117,16 @@ function App() {
           songQuery={songQuery}
           setSongQuery={setSongQuery}
         />
+        {/* occurs if multiple playlists were merged */}
         <Modal
-          open={hasCreated ? true : true}
           playListTitles={playListTitles}
+          //no worky
+          showDeleteModal={showDeleteModal}
+          setShowDeleteModal={setShowDeleteModal}
+          setHasCreated={setHasCreated}
+          user={user}
         />
+
         {successState.value && (
           <Alert severity="success" sx={{ marginTop: "1rem" }}>
             {successState.message}
@@ -128,9 +138,11 @@ function App() {
             setPlayList={setPlayList}
             setPlayListTitles={setPlayListTitles}
             setSongsSearch={setSongsSearch}
+            selectedPlaylists={selectedPlaylists}
+            setSelectedPlaylists={setSelectedPlaylists}
           />
         )}
-        <Grid container my={2} direction="row" spacing={2}>
+        <Grid container my={2} mb={10} direction="row" spacing={2}>
           <ResultsSection
             songsSearch={songsSearch}
             addSongToPlaylist={addSongToPlayList}
@@ -142,6 +154,7 @@ function App() {
             removeSongFromPlayList={removeSongFromPlayList}
             user={user}
             setHasCreated={setHasCreated}
+            setShowDeleteModal={setShowDeleteModal}
           />
         </Grid>
       </Container>

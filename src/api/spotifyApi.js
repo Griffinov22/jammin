@@ -55,21 +55,29 @@ export const createPlaylist = async (userId, token, playListName, uris) => {
       throw new Error();
     }
     const { id } = playListJson;
-    const addSongsData = await fetch(
-      `https://api.spotify.com/v1/playlists/${id}/tracks`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-        body: JSON.stringify({
-          uris,
-        }),
-      }
-    );
-    const addSongsJson = await addSongsData.json();
+    let addedAllSongs = false;
+    let addSongsData;
+    let addSongsJson;
 
-    return addSongsJson.snapshot_id;
+    const numberOfChunks = Math.ceil(uris.length / 100);
+
+    for (let i = 0; i < numberOfChunks; i++) {
+      addSongsData = await fetch(
+        `https://api.spotify.com/v1/playlists/${id}/tracks`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+          body: JSON.stringify({
+            uris: uris.slice(i * 100, i * 100 + 100),
+          }),
+        }
+      );
+      addSongsJson = await addSongsData.json();
+    }
+
+    return { status: 200 };
   } catch (err) {
     console.log(err);
   }

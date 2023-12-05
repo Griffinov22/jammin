@@ -14,11 +14,12 @@ const PlayListSection = ({
   clickedMerge,
   playListTitles,
   setPlayListTitles,
+  setShowDeleteModal,
 }) => {
   //consider refactor if have more than one playlist selected from user
   const [currTitle, setCurrTitle] = useState("");
   const [error, setError] = useState(false);
-  const ref = useRef();
+  const scrollDivRef = useRef();
 
   useEffect(() => {
     //if selected more than one playlist to merge, do not show a title
@@ -58,13 +59,18 @@ const PlayListSection = ({
       }
 
       if (playListCreation) {
-        setHasCreated(true);
+        if (playListTitles.length > 1) {
+          setShowDeleteModal(true);
+        } else {
+          setHasCreated(true);
+        }
       } else {
         alert("error submitting data to Spotify!");
       }
     } else {
       //turn playlist name red i.e. title was not given and/or playlist has no songs
       setError(true);
+      scrollDivRef.current.scrollTo({ top: 0, behavior: "smooth" });
     }
   };
 
@@ -83,6 +89,7 @@ const PlayListSection = ({
         p={2}
         display="flex"
         flexDirection="column"
+        ref={scrollDivRef}
         sx={{ minHeight: "60vh", ...(showScroll ? overflowStyle : {}) }}
       >
         {/* flex -> */}
@@ -150,12 +157,7 @@ const PlayListSection = ({
               ))}
           </Box>
           {startedList && (
-            <Button
-              type="submit"
-              variant="contained"
-              onClick={handleClick}
-              ref={ref}
-            >
+            <Button type="submit" variant="contained" onClick={handleClick}>
               {playListTitles.length == 1
                 ? "Update Playlist"
                 : playListTitles.length >= 1
