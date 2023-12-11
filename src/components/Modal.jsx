@@ -21,7 +21,6 @@ const Modal = ({
   setHasCreated,
 }) => {
   const [deletedPlaylists, setDeletedPlaylists] = useState([]);
-  const { token } = useAuth();
 
   const handleClose = async (e) => {
     const submitData =
@@ -51,12 +50,22 @@ const Modal = ({
   };
 
   return (
-    <Dialog open={showDeleteModal} onClose={handleClose} maxWidth="lg">
+    <Dialog
+      open={showDeleteModal}
+      onClose={handleClose}
+      maxWidth="lg"
+      data-testid="delete modal"
+    >
       <Card
         variant="outlined"
         sx={{ width: 600, padding: "1rem", textAlign: "center" }}
       >
-        <Typography variant="h5" component="h6" pb={2}>
+        <Typography
+          variant="h5"
+          component="h6"
+          pb={2}
+          data-testid="modal header"
+        >
           Would you like to delete any of the {playListTitles.length} playlists
           you merged?
         </Typography>
@@ -90,7 +99,13 @@ const Modal = ({
             return (
               <FormControlLabel
                 key={ind}
-                control={<Checkbox value={name} onChange={handleChange} />}
+                control={
+                  <Checkbox
+                    value={name}
+                    onChange={handleChange}
+                    data-testid="modal checkboxes"
+                  />
+                }
                 label={
                   <Typography variant="h5" sx={{ fontSize: "1.4rem" }}>
                     {name}
@@ -114,6 +129,7 @@ const Modal = ({
                 variant="contained"
                 color="primary"
                 aria-label="submit deleted playlist"
+                data-testid="modal submit"
               >
                 Submit
               </Button>

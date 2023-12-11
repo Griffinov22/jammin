@@ -4,7 +4,13 @@ import { blue } from "@mui/material/colors";
 const Header = () => {
   return (
     <Box bgcolor={blue[600]} py={2}>
-      <Typography variant="h4" component="h1" textAlign="center" color="white">
+      <Typography
+        variant="h4"
+        component="h1"
+        textAlign="center"
+        color="white"
+        data-testid="header"
+      >
         Jammin&apos;
       </Typography>
     </Box>
